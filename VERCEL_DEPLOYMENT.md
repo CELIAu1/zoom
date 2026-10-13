@@ -1,41 +1,75 @@
-# Deploy Waka on Vercel
+# Deploying the authenticated Waka product
 
-## Build settings
+## 1. Supabase
 
-1. Import `CELIAu1/zoom`, branch `main`.
-2. Set Framework Preset to **Next.js** and Root Directory to **.**.
-3. Leave Output Directory at its default; do not enter `dist` or `dist/client`.
-4. The tracked `vercel.json` selects `pnpm run build:vercel`, which runs `next build --webpack`. If you have an explicit conflicting dashboard override, clear it.
-5. Redeploy the latest commit. Installation continues to use the committed pnpm lockfile. Node is pinned to the supported 24.x line.
+Use a new production project (or a dedicated staging project first). The migration creates `waka_profiles`, `waka_drivers`, `waka_bookings`, `waka_booking_secrets`, `waka_offers`, `waka_events`, `waka_support`, `waka_saved_places` and `waka_admin_audit`. No existing demo records are imported.
 
-The default `build` script remains the Vinext/Cloudflare build used by the private Sites version. Running it as a Next.js build is what caused the original missing routes-manifest error.
+Run `supabase/migrations/202610130001_product.sql` once in the SQL editor **before creating Waka users**. Alternatively use Supabase CLI migrations. For an existing project containing Auth users, plan a profile backfill; the trigger applies to new users. Do not drop existing data to rerun a migration.
 
-## Preview without credentials
+Enable Email + Password Auth and leave email confirmations enabled. Set minimum password length to 12, configure production SMTP, Auth rate limits and your exact site/redirect URLs. Supabase's default email sender is not a production mail service.
 
-The Vercel page opens in setup mode and clearly states that server storage is unavailable. Select **Try browser-only demo** to test ride/delivery forms, negotiations, pickup PIN, lifecycle, history and earnings on your current device.
+Waka uses email codes entered on the same screen. Configure the **Confirm signup** and **Reset password** email templates to show `{{ .Token }}` prominently. For example:
 
-This is an explicit local simulation. Its records live in localStorage and its state rules run in the browser. They are not server-authoritative, are not isolated by real account authentication, and do not synchronize across devices. Clearing browser data removes them. No live dispatch, payments or verification are provided. Do not use this mode as production storage.
+```html
+<h2>Your Waka verification code</h2>
+<p>Enter this code in Waka:</p>
+<p style="font-size:28px;font-weight:bold;letter-spacing:6px">{{ .Token }}</p>
+<p>If you did not request this, ignore this email.</p>
+```
 
-## Database-backed guest demo
+Use the signup template for signup and reset template for recovery; Waka validates the matching token type. Configure short OTP expiry in Auth. Auth handles account creation, credential hashing, verification, rate limits and token rotation. Do not disable confirmation to work around email setup.
 
-1. Create or use a Supabase project.
-2. In its SQL editor, execute `supabase/vercel-demo.sql` once. It creates `waka_demo_workspaces` with RLS enabled and no client-role table access.
-3. In **Vercel → Project → Settings → Environment Variables**, set:
+## 2. Vercel
 
-| Name | Value |
-| --- | --- |
-| `SUPABASE_URL` | Your project URL, e.g. `https://your-project.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | The project's legacy `service_role` JWT API key; server use only |
-| `WAKA_SESSION_SECRET` | A stable, random secret of at least 32 characters |
+- Repository: `CELIAu1/zoom`; choose the product rewrite branch when testing it.
+- Framework preset: Next.js.
+- Root directory: `.`
+- Output directory: default; no override.
+- Node: 24.x.
+- Build: configured by `vercel.json` (`pnpm run build:vercel`). The default `pnpm build` also uses Next.js.
 
-Use the same environment scope as your deployment (Production and/or Preview). Never prefix these secret keys with `NEXT_PUBLIC_`. `.env.example` documents names only. A new secret can be generated locally with `openssl rand -hex 32`; keep it stable across deployments or existing guest sessions will become invalid.
+Set these server environment variables for the target deployment environment:
 
-4. Redeploy to apply the variables.
-5. Use a fresh browser profile, or remove only the `waka-browser-demo-v1` localStorage entry before opening the new deployment. Existing browser-only records do not automatically migrate to Supabase.
-6. The API sets a signed HttpOnly cookie identifying a guest workspace. Records persist in Supabase and mutations use an owner-and-version condition to reject competing updates.
+| Variable              | Value                                                         |
+| --------------------- | ------------------------------------------------------------- |
+| `SUPABASE_URL`        | `https://YOUR_PROJECT.supabase.co`                            |
+| `SUPABASE_ANON_KEY`   | Supabase publishable or legacy anon key, **not** service-role |
+| `MAPBOX_ACCESS_TOKEN` | Optional Mapbox key entitled to permanent geocoding           |
 
-This is database-backed **guest demo** persistence, not verified customer authentication. Customer and Partner modes still operate within one guest workspace. Real marketplace accounts, admin approval and multi-user dispatch require a separate production implementation.
+No service-role key is needed or used. Requests to PostgreSQL carry the logged-in user's access token. Never put secrets into committed source or chat.
 
-## Verification status
+Redeploy after setting environment variables. A successful build alone does not verify live Auth or the migration.
 
-The native Next.js production build was run successfully and `.next/routes-manifest.json` was verified. Automated tests cover both runtime handlers with isolated SQLite or mocked Supabase transport. Remote Vercel deployment and a real Supabase service have not been verified from this environment.
+## 3. Assign the first administrator
+
+Create and confirm your own account through the app. In the trusted Supabase SQL editor, identify the exact account by email and assign the admin role. Replace the sample email before running:
+
+```sql
+update public.waka_profiles p
+set role = 'admin'
+from auth.users u
+where p.id = u.id and u.email = 'YOUR_OPERATIONS_EMAIL';
+```
+
+Only trusted database operators may do this. There is no public admin signup. Driver approval is a recorded human decision; verify identity, driving licence, vehicle and required operating documents outside the app, then record the decision and notes in Operations. Driver self-approval and direct client writes are denied.
+
+## 4. Live acceptance check
+
+Use distinct customer and driver accounts in separate devices/browser profiles, and an operations account:
+
+1. Sign up; verify email; log out/in; recover and change a password.
+2. Driver submits vehicle details. Confirm they cannot receive jobs before approval.
+3. Operations verifies the driver and approves. Driver goes online in the customer's city.
+4. Customer creates a ride. Driver offers a fare. Customer counters; driver accepts.
+5. Verify that another user cannot read contacts, trip details or PIN. Verify only the customer sees the pickup PIN.
+6. Driver arrives, enters the customer's PIN, starts and completes the ride. Driver confirms received cash once. Customer rates the ride.
+7. Repeat for a business delivery; recipient details remain private until assignment and completion requires a delivery confirmation note.
+8. Try competing offer acceptance from two devices, expired offers, cancellation and refresh/reconnect.
+9. Check optional foreground location sharing and map on real iOS/Android devices. Test denied location permissions.
+10. Submit and resolve a support request. Check history and cash ledger.
+
+Do not announce public launch until these pass against the deployed project. Configure monitoring, backups, mail deliverability and an actual support/driver-review process. Terms, privacy notices and operating requirements must reflect your actual business before launch; this repository does not invent legal agreements.
+
+## Existing demo deployment
+
+The private ChatGPT Sites URL still serves the previously deployed demo until deliberately replaced. Old D1/Supabase demo tables are not read by this product. Production uses the new Supabase schema and independent email/password identities. This branch preserves the Sites build adapter for future work but Vercel is the intended deployment target of this release.

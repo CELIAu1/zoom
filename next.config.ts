@@ -1,11 +1,26 @@
-import type {NextConfig} from 'next';
-import path from 'node:path';
-const vercel=process.env.WAKA_BUILD_TARGET==='vercel'||process.env.VERCEL==='1';
-const nextConfig:NextConfig={
-  typescript: {tsconfigPath: vercel?"tsconfig.vercel.json":"tsconfig.json"},
-  webpack(config){
-    config.resolve.alias['@waka/runtime']=path.resolve(process.cwd(),vercel?'lib/vercel-workspace.ts':'lib/sites-workspace.ts');
-    return config;
+import type { NextConfig } from "next";
+const nextConfig: NextConfig = {
+  typescript: { tsconfigPath: "tsconfig.vercel.json" },
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(self)",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+        ],
+      },
+    ];
   },
 };
 export default nextConfig;
