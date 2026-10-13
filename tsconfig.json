@@ -25,6 +25,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@waka/runtime": [
+        "./lib/sites-workspace.ts"
       ]
     },
     "types": [
@@ -43,6 +46,7 @@
   ],
   "exclude": [
     "node_modules",
-    "examples"
+    "examples",
+    ".next"
   ]
 }

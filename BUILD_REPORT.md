@@ -30,4 +30,15 @@ Browser automation was unavailable. Responsive CSS and accessibility behaviors a
 
 Separate live customer/partner identities and production approval; normalized multi-user dispatch and real-time subscriptions; Supabase configuration if chosen for production; maps/geocoding/GPS; operational payments/payouts; secure document uploads and verification review; real contact mechanisms; notifications; emergency procedures and proof-of-delivery media. The current version is a persistent, single-owner simulation with two role views.
 
-GitHub write access was enabled for the CELIAu1 account after the initial build. The implementation, schema migration, tests and setup documentation are now published to CELIAu1/zoom. The initial source ZIP predates this documentation update.
+GitHub write access was subsequently enabled and the source was published to CELIAu1/zoom. The initial downloadable ZIP predates the Vercel compatibility fix; the repository is the current source.
+
+
+## Vercel compatibility fix
+
+The initial exported source used Vinext and Cloudflare runtime bindings, while Vercel auto-detected Next.js. This caused a missing `.next/routes-manifest.json` after the Vinext build. The repository now includes `vercel.json`, a native `build:vercel` command, a Vercel-specific TypeScript configuration and separate workspace handlers resolved per build target.
+
+The native Next.js build passes and emits the required manifest. The original Sites build is preserved. Four additional tests cover missing configuration, signed guest session tampering/expiry, Supabase-adapter persistence and session isolation/concurrent updates. Total automated tests: 14. Supabase tests mock its REST transport; no real Supabase project has been configured or remotely verified.
+
+Vercel opens a setup mode without credentials and requires the visitor to explicitly enable browser-only demo mode for local sample records. Optional Supabase server persistence uses a signed HTTP-only guest cookie, service-role-only workspace table and version-guarded writes. These guest sessions are not production customer/partner identity. The Cloudflare deployment continues using its existing ChatGPT identity and D1 records.
+
+No Vercel account connection is available here, so Vercel redeployment itself is not verified. Trigger a deployment from the new GitHub commit and use the supplied setup guide.

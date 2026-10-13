@@ -9,7 +9,7 @@ import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 const esbuild=await import(require.resolve('esbuild',{paths:[require.resolve('vite')]}));
 const temp=mkdtempSync(join(tmpdir(),'waka-api-test-'));
-await esbuild.build({entryPoints:[new URL('../app/api/workspace/route.ts',import.meta.url).pathname],bundle:true,platform:'node',format:'esm',outfile:join(temp,'route.mjs'),plugins:[{name:'test-bindings',setup(build:any){build.onResolve({filter:/cloudflare:workers|chatgpt-auth/},(args:any)=>({path:args.path,namespace:'bindings'}));build.onLoad({filter:/.*/,namespace:'bindings'},(args:any)=>({contents:args.path==='cloudflare:workers'?'export const env={get DB(){return globalThis.__wakaDB}}':'export async function getChatGPTUser(){return globalThis.__wakaUser}',loader:'js'}));}}]});
+await esbuild.build({entryPoints:[new URL('../app/api/workspace/route.ts',import.meta.url).pathname],bundle:true,platform:'node',format:'esm',outfile:join(temp,'route.mjs'),plugins:[{name:'test-bindings',setup(build:any){build.onResolve({filter:/cloudflare:workers|chatgpt-auth|^@waka\/runtime$/},(args:any)=>args.path==='@waka/runtime'?({path:new URL('../lib/sites-workspace.ts',import.meta.url).pathname}):({path:args.path,namespace:'bindings'}));build.onLoad({filter:/.*/,namespace:'bindings'},(args:any)=>({contents:args.path==='cloudflare:workers'?'export const env={get DB(){return globalThis.__wakaDB}}':'export async function getChatGPTUser(){return globalThis.__wakaUser}',loader:'js'}));}}]});
 const api=await import(pathToFileURL(join(temp,'route.mjs')).href);
 const db=new DatabaseSync(':memory:');db.exec(readFileSync(new URL('../drizzle/0000_nosy_thunderball.sql',import.meta.url),'utf8'));
 const global=globalThis as any;

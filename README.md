@@ -1,6 +1,12 @@
 # Waka
 
-A mobile-first ride and delivery negotiation application, built in TypeScript with React, Vinext and Cloudflare D1. The hosted version is an authenticated, owner-private product demo. It is not a live ride-hailing service.
+A mobile-first ride and delivery negotiation application, built in TypeScript with React. Two build targets are supported: Vinext/Cloudflare for Sites and native Next.js for Vercel. The hosted version is an authenticated, owner-private product demo. It is not a live ride-hailing service.
+
+## Vercel deployment
+
+Vercel reads `vercel.json` and runs `pnpm run build:vercel` (native `next build --webpack`). Keep framework preset Next.js, root directory `.`, and Output Directory unset/default. Do not set it to `dist`. The original `pnpm run build` still targets Vinext/Cloudflare.
+
+See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for steps and backend setup. Without server credentials, the Vercel app offers an explicit browser-only demo. Choosing it runs domain validation on the client and stores sample records on that device; it is not server-authoritative or a live service. For database-backed guest sessions, configure Supabase and a stable signing secret as documented. This does not provide real marketplace authentication or dispatch.
 
 ## What works
 

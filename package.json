@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.13.0"
+    "node": "24.x"
   },
   "scripts": {
     "install:ci": "bash scripts/install-pnpm.sh",
@@ -13,7 +13,10 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/*.test.ts"
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "build:vercel": "node scripts/run-next.mjs build",
+    "dev:vercel": "node scripts/run-next.mjs dev",
+    "start:vercel": "node scripts/run-next.mjs start"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

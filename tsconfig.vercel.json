@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@waka/runtime": [
+        "./lib/vercel-workspace.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "examples"
+  ]
+}
