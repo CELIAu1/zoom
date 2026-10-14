@@ -1,44 +1,41 @@
-# Waka build report
+# Rydo authenticated product rewrite
 
-Built from scratch against the supplied Waka brief and screenshots. The repository `CELIAu1/zoom` was inspected through GitHub: it contained only README.md on main. Both public reference URLs failed retrieval; their content was not claimed as inspected. Supplied screenshots informed rounded cards, typography hierarchy, offer composition and map/bottom-sheet relationship.
+Prepared 13 October 2026. Target: GitHub/Vercel, native Next.js 16, Node 24, Supabase Auth/PostgreSQL.
 
-## Delivered
+## What changed
 
-A private TypeScript application with React/Vinext and a persistent D1 backend. Warm neutral design tokens, dark primary actions, DM Sans with system fallback, responsive layouts, consistent icons, offer cards and active-job sheets replace the dominant green reference palette. Customer navigation is Home/History/Profile; Partner navigation is My Work/History/Profile. Payment records live in Profile and completed bookings.
+Rebuilt the interface around the Lovable reference's emerald green, lime highlights, cream surfaces, round offer cards and mobile bottom navigation. Added a separate account entrance with customer, driver and business selection, email/password signup, verification, login, recovery and password changes. Login loads the role recorded in the database; there is no role switcher. Admin is operator-assigned only.
 
-Customer ride/delivery request forms include validation and proposed fares. Delivery collects recipient/contact, parcel description, size and optional instructions. Driver offers can be accepted, declined or countered. Partner can accept the original fare or respond with a counter. Offers retain their history, enforce response turns, expire after five minutes and allow up to three rounds. Booking confirmation is distinct from fare agreement and pickup.
+Replaced the per-user demo JSON workspace with normalised, shared PostgreSQL records and authenticated database transactions. Removed the demo endpoints, guest sessions, browser fallback, seeded drivers, simulated approval and fake receipts from application code. Existing demo tables are left untouched and unused.
 
-Active jobs require assigned-partner arrival, correct pickup PIN, start and explicit completion. Delivery requires a textual demo handover note. Completion updates history and accrued earnings once. Demo receipts, tips and ratings are validated; earnings calculations use integer kobo and a centralized 10% commission on fare only. All three sample drivers can be operated by choosing their demo persona.
+Implemented:
 
-Profile edits and saved places persist. History has type/status filters, full details, event and offer logs, and device share/clipboard fallback. Onboarding submission does not imply approval; approval simulation is separately labelled. Calls, real payments and emergency response are explicitly unavailable.
+- Real customer/business requests visible to approved online drivers in the matching city.
+- Driver offers and counter offers, three negotiation turns, five-minute offer expiry and atomic assignment.
+- Vehicle applications and audited human approval, rejection or suspension.
+- Pickup arrival, customer-only PIN, persistent failed-attempt lockout, start, completion and delivery confirmation notes.
+- Cash receipt confirmation by the assigned driver, once; customer ratings, once.
+- Cash collected, commission owed and net earnings ledger (10% fare commission).
+- Saved places, account updates and persistent support requests with an operations inbox.
+- Optional Mapbox address search and real foreground device location sharing. No synthetic positions or ETA calculations.
+- Shared state refresh every eight seconds while visible, with foreground refresh and stale-read protection around commands.
 
-## Persistence and permissions
+## Verified
 
-Hosted authentication is ChatGPT sign-in with owner-private access. Each user has a separate demo workspace in D1. API writes verify identity, origin, payload size and row version. Fare and lifecycle rules are checked on the server. Compare-and-swap writes reject stale or competing commands. Switching roles and simulating approval are intentional demo controls within the owner's workspace; they are not production partner authorization.
+`pnpm test`: nine tests pass. The database tests run the actual migration and stored procedures on embedded PostgreSQL (PGlite), not a mocked booking engine. Tests cover access/role boundaries, signup escalation, direct-table denial, real multi-identity booking transitions, negotiation limits, competing assignment refusal, record isolation, expiry, delivery privacy and proof, PIN guessing lockout and one-time cash/rating updates.
 
-## Verification
+API tests cover missing configuration, no anonymous fallback, cross-origin mutation refusal, HttpOnly/Secure/SameSite cookies, refresh rotation, role input rejection, monetary validation, caller-identity stripping, persisted PIN errors and logout cleanup. Network provider responses are mocked in these API tests.
 
-- TypeScript type check passed.
-- Ten automated tests passed: seven domain/schema tests plus three HTTP-handler tests.
-- Covered complete ride and delivery lifecycles, direct fare acceptance, two-way countering, offer expiry, wrong-role actions, unapproved partners, wrong assigned partner, invalid fares, incorrect PIN, repeated completion/receipt, delivery proof requirement, owner isolation, unauthenticated/cross-origin/oversized requests and simultaneous updates.
-- API tests use the actual route handler bundled with test identity and D1-compatible in-memory SQLite bindings. They are not a deployed-service/browser test.
-- Production build and private deployment results are reported with the delivery link.
+`pnpm build`: native Next.js production build and TypeScript validation pass. The output includes `/`, `/api/auth`, `/api/product`, `/api/places` and the `.next/routes-manifest.json` Vercel requires. `git diff --check` passes.
 
-Browser automation was unavailable. Responsive CSS and accessibility behaviors are implemented, but real-device visual QA, keyboard/assistive-technology testing, platform-authenticated API smoke tests and an end-to-end browser journey remain unverified.
+## Not yet verified / launch dependencies
 
-## Remaining work for a live marketplace
+No Supabase or Mapbox credentials were available in the workspace. The migration has not been applied to a live project; signup mail, real token flows, deployed multi-device races and device GPS have not been exercised against live services. The environment does not expose the supported local browser QA capability, so responsive layouts and browser interactions have not been visually tested. PGlite tests verify transaction rules sequentially, not a load or concurrent-connection stress test.
 
-Separate live customer/partner identities and production approval; normalized multi-user dispatch and real-time subscriptions; Supabase configuration if chosen for production; maps/geocoding/GPS; operational payments/payouts; secure document uploads and verification review; real contact mechanisms; notifications; emergency procedures and proof-of-delivery media. The current version is a persistent, single-owner simulation with two role views.
+The Claude artifact requires sign-in and was not readable. The Lovable interface was inspected directly and the supplied screenshots informed the design.
 
-GitHub write access was subsequently enabled and the source was published to CELIAu1/zoom. The initial downloadable ZIP predates the Vercel compatibility fix; the repository is the current source.
+This is a cash-first implementation, not a card payment/payout integration. Mapbox is optional and needs permanent-geocoding entitlement to store results. Manual addresses work without it. The live map shows a driver's voluntarily shared latest device position, not navigation or background tracking. Delivery confirmation is a textual operational record, not photographic evidence or a recipient signature. No emergency dispatch or guaranteed response time is advertised. History currently returns the latest 100 relevant bookings; jobs return the latest 50 open city requests.
 
+Before public launch, complete `VERCEL_DEPLOYMENT.md`: configure Supabase, SMTP, email templates, rate limits, an operations account and the live acceptance checks. The business must supply its real support process, driver verification, privacy/terms and operating arrangements. The source is ready for review and staging configuration; it is not evidence that a live marketplace is already operational.
 
-## Vercel compatibility fix
-
-The initial exported source used Vinext and Cloudflare runtime bindings, while Vercel auto-detected Next.js. This caused a missing `.next/routes-manifest.json` after the Vinext build. The repository now includes `vercel.json`, a native `build:vercel` command, a Vercel-specific TypeScript configuration and separate workspace handlers resolved per build target.
-
-The native Next.js build passes and emits the required manifest. The original Sites build is preserved. Four additional tests cover missing configuration, signed guest session tampering/expiry, Supabase-adapter persistence and session isolation/concurrent updates. Total automated tests: 14. Supabase tests mock its REST transport; no real Supabase project has been configured or remotely verified.
-
-Vercel opens a setup mode without credentials and requires the visitor to explicitly enable browser-only demo mode for local sample records. Optional Supabase server persistence uses a signed HTTP-only guest cookie, service-role-only workspace table and version-guarded writes. These guest sessions are not production customer/partner identity. The Cloudflare deployment continues using its existing ChatGPT identity and D1 records.
-
-No Vercel account connection is available here, so Vercel redeployment itself is not verified. Trigger a deployment from the new GitHub commit and use the supplied setup guide.
+The existing private ChatGPT Sites deployment remains unchanged. This rewrite is prepared separately for GitHub review and Vercel deployment.

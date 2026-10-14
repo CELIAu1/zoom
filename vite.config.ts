@@ -52,7 +52,6 @@ export default defineConfig(async ({ command }) => {
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
-    resolve: { alias: { "@waka/runtime": new URL("./lib/sites-workspace.ts", import.meta.url).pathname } },
     server: {
       ...(managedLinux
         ? { host: "0.0.0.0", allowedHosts: ["terminal.local"] }
