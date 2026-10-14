@@ -12,7 +12,7 @@ export function settings() {
   const key = process.env.SUPABASE_ANON_KEY;
   if (!url || !key)
     throw new ApiError(
-      "Redo is not accepting accounts yet. The operator needs to connect authentication and the database.",
+      "Rydo is not accepting accounts yet. The operator needs to connect authentication and the database.",
       503,
     );
   if (!/^https:\/\/[^/]+$/.test(url))
@@ -42,7 +42,7 @@ export function failure(e: unknown) {
 }
 export async function body(req: Request) {
   if (req.headers.get("origin") !== new URL(req.url).origin)
-    throw new ApiError("This request must come from Redo.", 403);
+    throw new ApiError("This request must come from Rydo.", 403);
   if (!req.headers.get("content-type")?.startsWith("application/json"))
     throw new ApiError("JSON is required.", 415);
   const raw = await req.text();

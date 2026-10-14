@@ -17,11 +17,11 @@ import type { Product } from "./use-product";
 import type { Role } from "../../lib/product/types";
 export function Brand() {
   return (
-    <a className="brand" href="/" aria-label="Redo home">
+    <a className="brand" href="/" aria-label="Rydo home">
       <span className="brand-symbol">
         <i />
       </span>
-      Redo
+      Rydo
     </a>
   );
 }
@@ -137,7 +137,7 @@ export function Auth({ model }: { model: Product }) {
         <div className="auth-top">
           {mode === "login" ? (
             <>
-              New to Redo?{" "}
+              New to Rydo?{" "}
               <button className="text-button" onClick={() => go("signup")}>
                 Sign up <ArrowRight size={15} />
               </button>
@@ -166,16 +166,16 @@ export function Auth({ model }: { model: Product }) {
           {!model.configured && (
             <div className="notice-box">
               Account services are not connected yet. Registration will open
-              once Redo’s operator completes setup.
+              once Rydo’s operator completes setup.
             </div>
           )}
           {mode === "welcome" ? (
             <>
               <span className="eyebrow">LET’S GET YOU MOVING</span>
-              <h2>Welcome to Redo.</h2>
+              <h2>Welcome to Rydo.</h2>
               <p className="muted">
                 One place for your rides, deliveries, and next opportunity. How
-                will you use Redo?
+                will you use Rydo?
               </p>
               <RolePicker role={role} setRole={setRole} />
               <button className="btn primary wide" onClick={() => go("signup")}>
@@ -212,7 +212,7 @@ export function Auth({ model }: { model: Product }) {
                 {mode === "login"
                   ? "Log in to pick up where you left off."
                   : mode === "signup"
-                    ? "Your account opens the Redo experience that fits you."
+                    ? "Your account opens the Rydo experience that fits you."
                     : mode === "verify"
                       ? `Enter the email verification code sent to ${email}.`
                       : "We’ll help you securely access your account."}
@@ -386,7 +386,7 @@ export function Auth({ model }: { model: Product }) {
           )}
         </div>
         <footer className="auth-footer">
-          <span>Redo · Ride & delivery</span>
+          <span>Rydo · Ride & delivery</span>
           <span>Abuja & Lagos</span>
         </footer>
       </section>

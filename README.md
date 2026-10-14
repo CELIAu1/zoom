@@ -1,4 +1,4 @@
-# Redo
+# Rydo
 
 A green, mobile-first ride and delivery marketplace for Abuja and Lagos. Customers and businesses send real requests; approved drivers negotiate fares and fulfil bookings. No seeded drivers, demo personas, role switcher, simulated payments or browser-only workspace.
 

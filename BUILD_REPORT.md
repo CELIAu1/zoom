@@ -1,4 +1,4 @@
-# Redo authenticated product rewrite
+# Rydo authenticated product rewrite
 
 Prepared 13 October 2026. Target: GitHub/Vercel, native Next.js 16, Node 24, Supabase Auth/PostgreSQL.
 

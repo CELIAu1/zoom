@@ -38,7 +38,7 @@ export function DriverSetup({ model }: { model: Ready }) {
           ? "Our team must verify your licence, vehicle and operating documents before you can accept requests."
           : d.status === "suspended"
             ? "Please contact support to discuss the review of your driver account."
-            : "Tell us about your vehicle. Redo operations will review your details before you go online."}
+            : "Tell us about your vehicle. Rydo operations will review your details before you go online."}
       </p>
       <div className="onboarding-steps">
         <span className="done">
@@ -116,7 +116,7 @@ export function DriverSetup({ model }: { model: Ready }) {
             />
           </label>
           <p className="field-hint">
-            Visible only to you and authorised Redo operations staff. Submission
+            Visible only to you and authorised Rydo operations staff. Submission
             does not grant approval.
           </p>
           <button className="btn primary" disabled={model.busy}>
@@ -316,7 +316,7 @@ export function Profile({ model }: { model: Ready }) {
               ? "Save a place"
               : modal === "password"
                 ? "Change password"
-                : "Contact Redo support"
+                : "Contact Rydo support"
           }
           onClose={() => setModal(null)}
           error={localError || model.error}
@@ -485,7 +485,7 @@ export function Payments({ model }: { model: Ready }) {
       </section>
       {driver && (
         <p className="field-hint">
-          This is an earnings ledger, not a wallet balance. Redo does not move
+          This is an earnings ledger, not a wallet balance. Rydo does not move
           cash or automatically settle commission.
         </p>
       )}
@@ -497,7 +497,7 @@ export function Admin({ model }: { model: Ready }) {
   return (
     <>
       <div className="page-title">
-        <span className="eyebrow">REDO OPERATIONS</span>
+        <span className="eyebrow">RYDO OPERATIONS</span>
         <h1>Keep the city moving.</h1>
         <p>Review driver applications and handle support requests.</p>
       </div>

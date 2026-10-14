@@ -49,7 +49,7 @@ export default function App() {
       <div className="loading-screen">
         <Brand />
         <LoaderCircle className="spin" />
-        <p>Opening Redo…</p>
+        <p>Opening Rydo…</p>
       </div>
     );
   if (!controller.state || controller.recovery)
@@ -154,7 +154,7 @@ export default function App() {
                     <div>
                       <span className="eyebrow">
                         {merchant
-                          ? "REDO FOR BUSINESS"
+                          ? "RYDO FOR BUSINESS"
                           : driver
                             ? "YOUR DRIVER WORKSPACE"
                             : "LET’S GET MOVING"}
@@ -277,7 +277,7 @@ export default function App() {
                             <section className="green-feature">
                               <span className="feature-label">
                                 <span />
-                                THE REDO WAY
+                                THE RYDO WAY
                               </span>
                               <h2>
                                 Your journey.
@@ -431,7 +431,7 @@ export default function App() {
             {tab === "profile" && (
               <>
                 <div className="page-title">
-                  <span className="eyebrow">YOUR REDO</span>
+                  <span className="eyebrow">YOUR RYDO</span>
                   <h1>A few things about you.</h1>
                   <p>Your details, regular places, and account settings.</p>
                 </div>
@@ -442,7 +442,7 @@ export default function App() {
         )}
         <footer className="workspace-footer">
           <span>
-            Redo · {p.role === "merchant" ? "Business" : p.role} workspace
+            Rydo · {p.role === "merchant" ? "Business" : p.role} workspace
           </span>
           <button className="text-button" onClick={() => void model.reload()}>
             <RefreshCw size={12} />

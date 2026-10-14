@@ -1,23 +1,23 @@
-# Deploying the authenticated Redo product
+# Deploying the authenticated Rydo product
 
 ## 1. Supabase
 
 Use a new production project (or a dedicated staging project first). The migration creates `waka_profiles`, `waka_drivers`, `waka_bookings`, `waka_booking_secrets`, `waka_offers`, `waka_events`, `waka_support`, `waka_saved_places` and `waka_admin_audit`. No existing demo records are imported.
 
-Run `supabase/migrations/202610130001_product.sql` once in the SQL editor **before creating Redo users**. Alternatively use Supabase CLI migrations. For an existing project containing Auth users, plan a profile backfill; the trigger applies to new users. Do not drop existing data to rerun a migration.
+Run `supabase/migrations/202610130001_product.sql` once in the SQL editor **before creating Rydo users**. Alternatively use Supabase CLI migrations. For an existing project containing Auth users, plan a profile backfill; the trigger applies to new users. Do not drop existing data to rerun a migration.
 
 Enable Email + Password Auth and leave email confirmations enabled. Set minimum password length to 12, configure production SMTP, Auth rate limits and your exact site/redirect URLs. Supabase's default email sender is not a production mail service.
 
-Redo uses email codes entered on the same screen. Configure the **Confirm signup** and **Reset password** email templates to show `{{ .Token }}` prominently. For example:
+Rydo uses email codes entered on the same screen. Configure the **Confirm signup** and **Reset password** email templates to show `{{ .Token }}` prominently. For example:
 
 ```html
-<h2>Your Redo verification code</h2>
-<p>Enter this code in Redo:</p>
+<h2>Your Rydo verification code</h2>
+<p>Enter this code in Rydo:</p>
 <p style="font-size:28px;font-weight:bold;letter-spacing:6px">{{ .Token }}</p>
 <p>If you did not request this, ignore this email.</p>
 ```
 
-Use the signup template for signup and reset template for recovery; Redo validates the matching token type. Configure short OTP expiry in Auth. Auth handles account creation, credential hashing, verification, rate limits and token rotation. Do not disable confirmation to work around email setup.
+Use the signup template for signup and reset template for recovery; Rydo validates the matching token type. Configure short OTP expiry in Auth. Auth handles account creation, credential hashing, verification, rate limits and token rotation. Do not disable confirmation to work around email setup.
 
 ## 2. Vercel
 
