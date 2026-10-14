@@ -613,10 +613,10 @@ export function Trip({
     return () => navigator.geolocation.clearWatch(watch);
   }, [sharing, canShare]); // the hook uses current state setters; watch is deliberately stable
   const share = async () => {
-    const text = `Waka trip ${b.id.slice(0, 8)}\n${b.pickup} → ${b.destination}\n${b.driver_name || ""} · ${b.driver_plate || ""}`;
+    const text = `Redo trip ${b.id.slice(0, 8)}\n${b.pickup} → ${b.destination}\n${b.driver_name || ""} · ${b.driver_plate || ""}`;
     try {
       if (navigator.share)
-        await navigator.share({ title: "My Waka journey", text });
+        await navigator.share({ title: "My Redo journey", text });
       else {
         await navigator.clipboard.writeText(text);
         model.setNotice("Trip details copied.");
@@ -1141,7 +1141,7 @@ export function Trip({
             ) : (
               <p>
                 Confirm only after receiving {money(b.agreed_fare || 0)} in
-                cash. This records your receipt; Waka does not collect or
+                cash. This records your receipt; Redo does not collect or
                 transfer the money.
               </p>
             )}

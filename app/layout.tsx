@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "Waka — Your ride. Your offer.",
+  title: "Redo — Your ride. Your offer.",
   description:
     "A considered way to move. Request rides and deliveries, negotiate a fair fare, and follow every journey.",
   icons: { icon: "/favicon.svg" },
